@@ -1,0 +1,15 @@
+
+# Secret dan credential
+.env
+
+# Cache Python dan pytest
+__pycache__/
+.pytest_cache/
+
+# Virtual environment
+.venv/
+venv/
+
+# File hasil testing
+htmlcov/
+.coverage
