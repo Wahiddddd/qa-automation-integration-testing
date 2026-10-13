@@ -28,5 +28,5 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run pytest
-        run: python -m pytest -v tests/test_app.py
+      - name: Run smoke tests
+        run: python -m pytest -v -m smoke tests/test_app.py

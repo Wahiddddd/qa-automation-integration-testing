@@ -1,3 +1,6 @@
+import pytest
+
+@pytest.mark.smoke
 def test_ci_pipeline_runs():
     result = 2 + 2
 
