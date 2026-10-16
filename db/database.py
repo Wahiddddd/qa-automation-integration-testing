@@ -29,6 +29,28 @@ def get_user_by_id(user_id):
         cursor.close()
         connection.close()
 
+
+def insert_user(username, email, role):
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    try:
+        query = """
+            INSERT INTO users (username, email, role)
+            VALUES (%s, %s, %s)
+        """
+
+        cursor.execute(query, (username, email, role))
+        connection.commit()
+
+        user_id = cursor.lastrowid
+
+        return user_id
+
+    finally:
+        cursor.close()
+        connection.close()
+
 def delete_user_by_id(user_id):
 
     connection = get_connection()

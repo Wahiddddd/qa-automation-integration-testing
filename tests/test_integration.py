@@ -2,6 +2,8 @@ import requests
 import pytest
 from db.database import get_user_by_id
 
+@pytest.mark.smoke
+@pytest.mark.regression
 def test_create_user_api():
 
     payload = {
@@ -27,11 +29,11 @@ def test_create_user_api():
     assert db_user["username"] == body["username"]
     assert db_user["email"] == body["email"]
     assert db_user["role"] == body["role"]
-    
-def test_create_user_and_cleanup(created_user):
 
-    assert created_user["username"] == "qa_cleanup"
-    assert created_user["email"] == "qa_cleanup@test.com"
+@pytest.mark.regression
+def test_create_user_and_cleanup(created_user):
+    assert created_user["username"] == "wahid_cleanup"
+    assert created_user["email"] == "wahid_cleanup@test.com"
     assert created_user["role"] == "buyer"
 
 @pytest.mark.smoke
