@@ -1,4 +1,3 @@
-
 name: QA Automation CI
 
 on:
@@ -11,15 +10,25 @@ permissions:
   contents: read
 
 jobs:
-  pytest:
+  test:
     runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: rootpassword
+          MYSQL_DATABASE: qa_integration
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v7
+        uses: actions/setup-python@v5
         with:
           python-version: "3.13"
 
@@ -28,5 +37,27 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run smoke tests
-        run: python -m pytest -v -m smoke tests/test_app.py
+      - name: Setup Database Schema
+        run: |
+          mysql -h 127.0.0.1 -P 3306 -u root -prootpassword qa_integration < db/schema.sql
+
+      - name: Run Flask API in background
+        env:
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_NAME: qa_integration
+          DB_USER: root
+          DB_PASSWORD: rootpassword
+        run: |
+          python app.py &
+          sleep 3
+
+      - name: Run All Automated Tests
+        env:
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_NAME: qa_integration
+          DB_USER: root
+          DB_PASSWORD: rootpassword
+        run: |
+          pytest -v
