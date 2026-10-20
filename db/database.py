@@ -67,3 +67,34 @@ def delete_user_by_id(user_id):
     finally:
         cursor.close()
         connection.close()
+
+def get_user_by_email(email):
+    connection = get_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    try:
+        query = """
+            SELECT id, username, email, role
+            FROM users
+            WHERE email = %s
+        """
+        cursor.execute(query, (email,))
+        result = cursor.fetchone()
+        return result
+
+    finally:
+        cursor.close()
+        connection.close()
+
+def delete_user_by_email(email):
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    try:
+        query = "DELETE FROM users WHERE email = %s"
+        cursor.execute(query, (email,))
+        connection.commit()
+
+    finally:
+        cursor.close()
+        connection.close()

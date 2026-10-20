@@ -10,9 +10,26 @@ def create_user():
 
     data = request.get_json()
 
+    required_fields = ["username", "email", "role"]
+
+    #validation if field empty
+    if not data or any(
+        field not in data or not data[field]
+        for field in required_fields
+    ):
+        return jsonify({
+            "message": "username, email, dan role harus diisi"
+        }), 400
+
     username = data["username"]
     email = data["email"]
     role = data["role"]
+
+    # Validasi tipe data
+    if not isinstance(username, str) or not isinstance(email, str) or not isinstance(role, str):
+        return jsonify({
+            "message": "username, email, dan role harus berupa string"
+        }), 400
 
     connection = get_connection()
 
